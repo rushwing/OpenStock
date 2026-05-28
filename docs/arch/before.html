@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenStock 重构前架构图</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 40px;
+    }
+    .diagram-container {
+      display: flex;
+      justify-content: center;
+    }
+    svg text { font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <h1>重构前架构 — OpenStock（美股 Dashboard）</h1>
+  <p class="subtitle">Next.js 15.5 单体应用 · MongoDB Atlas · 美股数据 · Inngest 邮件自动化</p>
+
+  <div class="diagram-container">
+    <svg width="900" height="620" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#475569"/>
+        </marker>
+        <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#0fdba8"/>
+        </marker>
+        <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+        </marker>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+
+      <!-- Background grid -->
+      <rect width="900" height="620" fill="#0f1117" rx="12"/>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2433" stroke-width="0.5"/>
+      </pattern>
+      <rect width="900" height="620" fill="url(#grid)" rx="12"/>
+
+      <!-- ─── LAYER 1: User Browser ─── -->
+      <rect x="370" y="20" width="160" height="56" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="450" y="44" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">用户浏览器</text>
+      <text x="450" y="60" text-anchor="middle" fill="#64748b" font-size="10">Chrome / Safari</text>
+
+      <!-- Arrow: Browser → Next.js -->
+      <line x1="450" y1="76" x2="450" y2="118" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+
+      <!-- ─── LAYER 2: Next.js App ─── -->
+      <rect x="80" y="120" width="740" height="220" rx="12" fill="#0f172a" stroke="#1e3a5f" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="450" y="146" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="700">Next.js 15.5 (Vercel)</text>
+
+      <!-- Pages group -->
+      <rect x="100" y="158" width="320" height="80" rx="8" fill="#1a2744" stroke="#2563eb" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="260" y="175" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="600">Pages (App Router)</text>
+      <rect x="112" y="182" width="86" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="155" y="200" text-anchor="middle" fill="#93c5fd" font-size="9.5">/ Dashboard</text>
+      <rect x="206" y="182" width="86" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="249" y="200" text-anchor="middle" fill="#93c5fd" font-size="9.5">/watchlist</text>
+      <rect x="300" y="182" width="108" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="354" y="200" text-anchor="middle" fill="#93c5fd" font-size="9.5">/stocks/[symbol]</text>
+      <rect x="112" y="214" width="86" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="155" y="232" text-anchor="middle" fill="#93c5fd" font-size="9.5">/sign-in</text>
+      <rect x="206" y="214" width="86" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="249" y="232" text-anchor="middle" fill="#93c5fd" font-size="9.5">/sign-up</text>
+
+      <!-- API Routes group -->
+      <rect x="440" y="158" width="360" height="80" rx="8" fill="#1a2744" stroke="#2563eb" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="620" y="175" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="600">API Routes</text>
+      <rect x="452" y="182" width="130" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="517" y="200" text-anchor="middle" fill="#93c5fd" font-size="9.5">/api/inngest</text>
+      <rect x="592" y="182" width="130" height="28" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="657" y="200" text-anchor="middle" fill="#93c5fd" font-size="9.5">Server Actions</text>
+      <text x="620" y="228" text-anchor="middle" fill="#475569" font-size="9">finnhub.actions.ts · adanos.actions.ts · auth.actions.ts</text>
+
+      <!-- Stack labels -->
+      <rect x="100" y="253" width="720" height="72" rx="8" fill="#131c30" stroke="#1e3a5f" stroke-width="1"/>
+      <text x="460" y="272" text-anchor="middle" fill="#475569" font-size="10" font-weight="600">Tech Stack</text>
+      <text x="140" y="292" fill="#64748b" font-size="9.5">React 19 + TypeScript</text>
+      <text x="285" y="292" fill="#64748b" font-size="9.5">Tailwind CSS v4</text>
+      <text x="415" y="292" fill="#64748b" font-size="9.5">better-auth 1.3</text>
+      <text x="535" y="292" fill="#64748b" font-size="9.5">Inngest 3.47</text>
+      <text x="660" y="292" fill="#64748b" font-size="9.5">Nodemailer</text>
+      <text x="140" y="310" fill="#64748b" font-size="9.5">Radix UI + Shadcn</text>
+      <text x="285" y="310" fill="#64748b" font-size="9.5">Mongoose 8.19</text>
+      <text x="415" y="310" fill="#64748b" font-size="9.5">sonner · cmdk</text>
+      <text x="535" y="310" fill="#64748b" font-size="9.5">react-hook-form</text>
+      <text x="660" y="310" fill="#64748b" font-size="9.5">date-fns · lucide</text>
+
+      <!-- ─── LAYER 3: Data & External Services ─── -->
+
+      <!-- MongoDB Atlas -->
+      <rect x="30" y="400" width="170" height="90" rx="10" fill="#14532d" stroke="#16a34a" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="115" y="422" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">MongoDB Atlas</text>
+      <line x1="55" y1="430" x2="175" y2="430" stroke="#16a34a" stroke-width="0.5" opacity="0.5"/>
+      <text x="115" y="446" text-anchor="middle" fill="#86efac" font-size="9.5">Users · Sessions</text>
+      <text x="115" y="462" text-anchor="middle" fill="#86efac" font-size="9.5">Watchlist Items</text>
+      <text x="115" y="478" text-anchor="middle" fill="#86efac" font-size="9.5">Price Alerts</text>
+
+      <!-- Finnhub -->
+      <rect x="220" y="400" width="155" height="90" rx="10" fill="#1c1917" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="297" y="422" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">Finnhub API</text>
+      <line x1="240" y1="430" x2="358" y2="430" stroke="#d97706" stroke-width="0.5" opacity="0.5"/>
+      <text x="297" y="446" text-anchor="middle" fill="#fde68a" font-size="9.5">Stock Quotes</text>
+      <text x="297" y="462" text-anchor="middle" fill="#fde68a" font-size="9.5">Company Profiles</text>
+      <text x="297" y="478" text-anchor="middle" fill="#fde68a" font-size="9.5">Market News</text>
+
+      <!-- Adanos -->
+      <rect x="390" y="400" width="155" height="90" rx="10" fill="#1e1b4b" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="467" y="422" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="700">Adanos API</text>
+      <line x1="410" y1="430" x2="528" y2="430" stroke="#7c3aed" stroke-width="0.5" opacity="0.5"/>
+      <text x="467" y="446" text-anchor="middle" fill="#c4b5fd" font-size="9.5">Reddit Sentiment</text>
+      <text x="467" y="462" text-anchor="middle" fill="#c4b5fd" font-size="9.5">X.com Sentiment</text>
+      <text x="467" y="478" text-anchor="middle" fill="#c4b5fd" font-size="9.5">Buzz Score</text>
+
+      <!-- TradingView -->
+      <rect x="560" y="400" width="155" height="90" rx="10" fill="#0c1a2e" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="637" y="422" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700">TradingView</text>
+      <line x1="580" y1="430" x2="698" y2="430" stroke="#0284c7" stroke-width="0.5" opacity="0.5"/>
+      <text x="637" y="446" text-anchor="middle" fill="#7dd3fc" font-size="9.5">Charts (Embed)</text>
+      <text x="637" y="462" text-anchor="middle" fill="#7dd3fc" font-size="9.5">Heatmap / Overview</text>
+      <text x="637" y="478" text-anchor="middle" fill="#7dd3fc" font-size="9.5">Technicals Widget</text>
+
+      <!-- Inngest + Email -->
+      <rect x="30" y="510" width="175" height="90" rx="10" fill="#1c0a2e" stroke="#9333ea" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="117" y="532" text-anchor="middle" fill="#d946ef" font-size="11" font-weight="700">Inngest Cloud</text>
+      <line x1="50" y1="540" x2="188" y2="540" stroke="#9333ea" stroke-width="0.5" opacity="0.5"/>
+      <text x="117" y="556" text-anchor="middle" fill="#f0abfc" font-size="9.5">Welcome Email</text>
+      <text x="117" y="572" text-anchor="middle" fill="#f0abfc" font-size="9.5">Weekly News Summary</text>
+      <text x="117" y="588" text-anchor="middle" fill="#f0abfc" font-size="9.5">Price Alert Check</text>
+
+      <!-- AI Providers -->
+      <rect x="725" y="400" width="155" height="90" rx="10" fill="#1a1a2e" stroke="#6366f1" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="802" y="422" text-anchor="middle" fill="#818cf8" font-size="11" font-weight="700">AI Providers</text>
+      <line x1="745" y1="430" x2="863" y2="430" stroke="#6366f1" stroke-width="0.5" opacity="0.5"/>
+      <text x="802" y="446" text-anchor="middle" fill="#a5b4fc" font-size="9.5">Gemini</text>
+      <text x="802" y="462" text-anchor="middle" fill="#a5b4fc" font-size="9.5">MiniMax / Siray</text>
+      <text x="802" y="478" text-anchor="middle" fill="#a5b4fc" font-size="9.5">Email Copy Gen</text>
+
+      <!-- Kit.com -->
+      <rect x="225" y="510" width="155" height="90" rx="10" fill="#1c1008" stroke="#b45309" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="302" y="532" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">Kit.com</text>
+      <line x1="245" y1="540" x2="363" y2="540" stroke="#b45309" stroke-width="0.5" opacity="0.5"/>
+      <text x="302" y="556" text-anchor="middle" fill="#fcd34d" font-size="9.5">Subscriber List</text>
+      <text x="302" y="572" text-anchor="middle" fill="#fcd34d" font-size="9.5">Broadcast Emails</text>
+      <text x="302" y="588" text-anchor="middle" fill="#fcd34d" font-size="9.5">Re-engagement</text>
+
+      <!-- ─── Arrows: Next.js → Services ─── -->
+      <!-- → MongoDB -->
+      <path d="M 260 340 L 115 400" stroke="#16a34a" stroke-width="1.5" fill="none" marker-end="url(#arrow-teal)" opacity="0.7"/>
+      <text x="160" y="368" fill="#16a34a" font-size="9" opacity="0.9">Auth + Data</text>
+
+      <!-- → Finnhub -->
+      <path d="M 350 340 L 297 400" stroke="#d97706" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity="0.7"/>
+      <text x="290" y="368" fill="#d97706" font-size="9" opacity="0.9">Stock Data</text>
+
+      <!-- → Adanos -->
+      <path d="M 450 340 L 467 400" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity="0.7"/>
+      <text x="448" y="368" fill="#7c3aed" font-size="9" opacity="0.9">Sentiment</text>
+
+      <!-- → TradingView -->
+      <path d="M 590 340 L 637 400" stroke="#0284c7" stroke-width="1.5" fill="none" marker-end="url(#arrow-blue)" opacity="0.7"/>
+      <text x="610" y="368" fill="#0284c7" font-size="9" opacity="0.9">Charts</text>
+
+      <!-- → Inngest -->
+      <path d="M 200 340 L 117 510" stroke="#9333ea" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity="0.7" stroke-dasharray="5,3"/>
+      <text x="115" y="430" fill="#9333ea" font-size="9" opacity="0.9">Webhooks</text>
+
+      <!-- → AI Providers -->
+      <path d="M 700 340 L 802 400" stroke="#6366f1" stroke-width="1.5" fill="none" marker-end="url(#arrow)" opacity="0.7" stroke-dasharray="5,3"/>
+      <text x="730" y="368" fill="#6366f1" font-size="9" opacity="0.9">LLM</text>
+
+      <!-- ─── Legend ─── -->
+      <rect x="680" y="510" width="200" height="90" rx="8" fill="#0f1117" stroke="#1e293b" stroke-width="1"/>
+      <text x="780" y="530" text-anchor="middle" fill="#64748b" font-size="10" font-weight="600">图例</text>
+      <line x1="698" y1="545" x2="730" y2="545" stroke="#475569" stroke-width="1.5"/>
+      <text x="742" y="549" fill="#64748b" font-size="9.5">HTTP 请求</text>
+      <line x1="698" y1="562" x2="730" y2="562" stroke="#475569" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="742" y="566" fill="#64748b" font-size="9.5">异步/Webhook</text>
+      <rect x="698" y="574" width="14" height="10" rx="2" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+      <text x="720" y="583" fill="#64748b" font-size="9.5">Next.js 模块</text>
+      <rect x="698" y="589" width="14" height="10" rx="2" fill="#14532d" stroke="#16a34a" stroke-width="1"/>
+      <text x="720" y="598" fill="#64748b" font-size="9.5">外部服务</text>
+    </svg>
+  </div>
+</body>
+</html>
