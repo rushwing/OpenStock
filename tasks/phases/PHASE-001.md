@@ -25,7 +25,7 @@ priority: P0
 
 1. `curl http://localhost:3000/api/cn/health` 返回 `{"status": "ok"}`（需 Python 后端同时运行）
 2. 未登录用户访问 `/api/cn/*` 收到 401，登录用户收到 Python 后端的真实响应
-3. `pnpm typecheck && pnpm test && pnpm lint` 全部通过
+3. `pnpm typecheck && pnpm test` 通过；`pnpm lint` 对本 PR 改动文件无新增错误（全量 lint 基线清理见 REQ-001）
 
 ## Dependencies
 

@@ -94,7 +94,6 @@ const SignUp = () => {
                 <CountrySelectField
                     name="country"
                     label="Country"
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     control={control as unknown as Control<FieldValues>}
                     error={errors.country}
                     required

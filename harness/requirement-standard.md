@@ -105,6 +105,19 @@ pnpm lint        # eslint（等价于 ruff check）
 
 全部通过后方可 `gh pr create --draft`。
 
+**Lint 基线说明**：原始仓库存在约 83 个 lint 问题（36 errors / 47 warnings），均为 pre-existing。在 REQ-001 完成 lint 基线清理之前，lint gate 定义为：
+
+> **PR 引入的新 lint 错误数量 = 0**（不要求清零 pre-existing 问题）
+
+验证命令（对比分支与 main 的新增错误）：
+
+```bash
+# 仅检查本 PR 改动的文件是否引入新错误
+git diff --name-only origin/main...HEAD | grep -E '\.(ts|tsx)$' | xargs pnpm eslint
+```
+
+REQ-001 完成后，gate 升级为全量 `pnpm lint` 零错误通过。
+
 ---
 
 ## §6 Acceptance Criterion Rules

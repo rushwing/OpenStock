@@ -21,7 +21,6 @@ export const getAuth = async (): Promise<ReturnType<typeof betterAuth>> => {
         throw new Error("MongoDB connection not found!");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     authInstance = betterAuth({
         database: mongodbAdapter(database),
        secret: process.env.BETTER_AUTH_SECRET,
