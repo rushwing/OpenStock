@@ -32,4 +32,11 @@ priority: P1
 
 ## Notes
 
-AI 信号生成可能耗时 30-60s（LangGraph 多步 agent）。为避免 Vercel Functions 的 10s 超时，信号触发走**客户端直连 Python 后端**（非代理层），URL 由 `NEXT_PUBLIC_PYTHON_BACKEND_URL` 提供。其他普通查询仍走代理层。
+AI 信号生成可能耗时 30-60s（LangGraph 多步 agent）。为避免 Vercel Functions 的 10s 超时，同时不绕过 better-auth/JWT 设计，信号触发采用 **job-id 轮询**模式（见 REQ-007）：
+
+```
+POST /api/cn/analysis/trigger  → Python 立即返回 { job_id }（<1s）
+GET  /api/cn/analysis/status/{job_id}  → 客户端每 5s 轮询状态
+```
+
+全程走 Next.js 代理层（`/api/cn/*`），不直连 Python，不需要 `NEXT_PUBLIC_PYTHON_BACKEND_URL`。

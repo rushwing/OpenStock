@@ -194,15 +194,16 @@ services:
 |---|---|---|
 | 带宽超限 | 100GB/月，超出 $0.15/GB | 个人使用远低于 1GB/月 |
 | 函数调用超限 | 100,000 次/天 | 个人使用 <1,000 次/天 |
-| 函数执行时间超限 | 10s/次 | ⚠️ AI 信号生成可能超时（通过直连 Python 后端避免） |
+| 函数执行时间超限 | 10s/次 | ⚠️ AI 信号生成可能超时（通过 job-id 轮询避免，见 REQ-007） |
 | 并发超限 | 无（Hobby 有软限制） | 个人使用无压力 |
 
 **AI 信号调用的正确方式**：
 
 AI 信号生成（`/cn/signals` → Python LangGraph）响应时间可能 30-60s，超过 Vercel 函数 10s 限制。解决方案：
 
-- 方案 1（推荐）：客户端直接调用 Python 后端（绕过 Next.js 代理），信号生成走长连接
-- 方案 2：Next.js 代理只用于普通 CRUD 请求；信号触发使用 SSE（Server-Sent Events）流式响应
+- **选定方案：job-id 轮询**（REQ-007）：`POST /api/cn/analysis/trigger` 立即返回 `{ job_id }`，客户端每 5s 轮询 `GET /api/cn/analysis/status/{job_id}`，全程走 Next.js 代理，不绕过 better-auth/JWT
+- ~~方案 1（已否决）~~：客户端直接调用 Python 后端——会绕过 better-auth 鉴权（见 ADR-001 REQ-003）
+- 备选：SSE 流式响应——可行但 Vercel Streaming 有额外约束，job-id 轮询更简单
 
 **推荐决策路径**：
 

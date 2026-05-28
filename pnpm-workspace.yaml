@@ -2,3 +2,6 @@ allowBuilds:
   protobufjs: true
   sharp: true
   unrs-resolver: true
+
+overrides:
+  mongodb: "6.21.0"

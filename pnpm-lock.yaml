@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  mongodb: 6.21.0
+
 importers:
 
   .:
@@ -60,7 +63,7 @@ importers:
         specifier: ^0.544.0
         version: 0.544.0(react@19.1.0)
       mongodb:
-        specifier: ^6.20.0
+        specifier: 6.21.0
         version: 6.21.0
       mongoose:
         specifier: ^8.19.0
@@ -190,7 +193,7 @@ packages:
     peerDependencies:
       '@better-auth/core': ^1.6.11
       '@better-auth/utils': 0.4.0
-      mongodb: ^6.0.0 || ^7.0.0
+      mongodb: 6.21.0
     peerDependenciesMeta:
       mongodb:
         optional: true
@@ -2117,7 +2120,7 @@ packages:
       better-sqlite3: ^12.0.0
       drizzle-kit: '>=0.31.4'
       drizzle-orm: ^0.45.2
-      mongodb: ^6.0.0 || ^7.0.0
+      mongodb: 6.21.0
       mysql2: ^3.0.0
       next: ^14.0.0 || ^15.0.0 || ^16.0.0
       pg: ^8.0.0
@@ -3076,33 +3079,6 @@ packages:
 
   mongodb-connection-string-url@3.0.2:
     resolution: {integrity: sha512-rMO7CGo/9BFwyZABcKAWL8UJwH/Kc2x0g72uhDWzG48URRax5TCIcJ7Rc3RZqffZzO/Gwff/jyKwCU9TN8gehA==}
-
-  mongodb@6.20.0:
-    resolution: {integrity: sha512-Tl6MEIU3K4Rq3TSHd+sZQqRBoGlFsOgNrH5ltAcFBV62Re3Fd+FcaVf8uSEQFOJ51SDowDVttBTONMfoYWrWlQ==}
-    engines: {node: '>=16.20.1'}
-    peerDependencies:
-      '@aws-sdk/credential-providers': ^3.188.0
-      '@mongodb-js/zstd': ^1.1.0 || ^2.0.0
-      gcp-metadata: ^5.2.0
-      kerberos: ^2.0.1
-      mongodb-client-encryption: '>=6.0.0 <7'
-      snappy: ^7.3.2
-      socks: ^2.7.1
-    peerDependenciesMeta:
-      '@aws-sdk/credential-providers':
-        optional: true
-      '@mongodb-js/zstd':
-        optional: true
-      gcp-metadata:
-        optional: true
-      kerberos:
-        optional: true
-      mongodb-client-encryption:
-        optional: true
-      snappy:
-        optional: true
-      socks:
-        optional: true
 
   mongodb@6.21.0:
     resolution: {integrity: sha512-URyb/VXMjJ4da46OeSXg+puO39XH9DeQpWCslifrRn9JWugy0D+DvvBvkm2WxmHe61O/H19JM66p1z7RHVkZ6A==}
@@ -6979,12 +6955,6 @@ snapshots:
       '@types/whatwg-url': 11.0.5
       whatwg-url: 14.2.0
 
-  mongodb@6.20.0:
-    dependencies:
-      '@mongodb-js/saslprep': 1.4.11
-      bson: 6.10.4
-      mongodb-connection-string-url: 3.0.2
-
   mongodb@6.21.0:
     dependencies:
       '@mongodb-js/saslprep': 1.4.11
@@ -6995,7 +6965,7 @@ snapshots:
     dependencies:
       bson: 6.10.4
       kareem: 2.6.3
-      mongodb: 6.20.0
+      mongodb: 6.21.0
       mpath: 0.9.0
       mquery: 5.0.0
       ms: 2.1.3
