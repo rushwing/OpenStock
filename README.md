@@ -269,9 +269,10 @@ GEMINI_API_KEY=your_gemini_api_key
 # Get your key at https://platform.minimaxi.com
 # MINIMAX_API_KEY=your_minimax_api_key
 
-# Inngest Signing Key (required for Vercel deployment)
-# Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
+# Inngest keys (both required — signing key verifies inbound webhooks, event key sends outbound events)
+# Get both from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
+INNGEST_EVENT_KEY=your_inngest_event_key
 
 # Email (Nodemailer via Gmail; consider App Passwords if 2FA)
 NODEMAILER_EMAIL=youraddress@gmail.com
@@ -310,9 +311,10 @@ GEMINI_API_KEY=your_gemini_api_key
 # Get your key at https://platform.minimaxi.com
 # MINIMAX_API_KEY=your_minimax_api_key
 
-# Inngest Signing Key (required for Vercel deployment)
-# Get this from your Inngest dashboard: https://app.inngest.com/env/settings/keys
+# Inngest keys (both required — signing key verifies inbound webhooks, event key sends outbound events)
+# Get both from your Inngest dashboard: https://app.inngest.com/env/settings/keys
 INNGEST_SIGNING_KEY=your_inngest_signing_key
+INNGEST_EVENT_KEY=your_inngest_event_key
 
 # Email (Nodemailer via Gmail; consider App Passwords if 2FA)
 NODEMAILER_EMAIL=youraddress@gmail.com

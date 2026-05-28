@@ -22,7 +22,8 @@ const requiredVars = {
     
     // Inngest
     'GEMINI_API_KEY': 'Google Gemini API key',
-    'INNGEST_SIGNING_KEY': 'Inngest signing key (for Vercel)',
+    'INNGEST_SIGNING_KEY': 'Inngest signing key (inbound webhook verification)',
+    'INNGEST_EVENT_KEY': 'Inngest event key (outbound event sending)',
     
     // Email
     'NODEMAILER_EMAIL': 'Gmail address for sending emails',

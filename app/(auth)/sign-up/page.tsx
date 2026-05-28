@@ -6,6 +6,7 @@ import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
 import { CountrySelectField } from "@/components/forms/CountrySelectField";
+import type { Control, FieldValues } from "react-hook-form";
 import FooterLink from "@/components/forms/FooterLink";
 import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import { useRouter } from "next/navigation";
@@ -93,7 +94,7 @@ const SignUp = () => {
                 <CountrySelectField
                     name="country"
                     label="Country"
-                    control={control}
+                    control={control as unknown as Control<FieldValues>}
                     error={errors.country}
                     required
                 />

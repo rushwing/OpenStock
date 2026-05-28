@@ -8,7 +8,7 @@ import { sendPasswordResetEmail } from "@/lib/nodemailer/reset-password";
 let authInstance: ReturnType<typeof betterAuth> | null = null;
 
 
-export const getAuth = async () => {
+export const getAuth = async (): Promise<ReturnType<typeof betterAuth>> => {
     if(authInstance) {
         return authInstance;
     }
@@ -44,7 +44,7 @@ export const getAuth = async () => {
         },
         plugins: [nextCookies()],
 
-    });
+    }) as unknown as ReturnType<typeof betterAuth>;
 
     return authInstance;
 }
