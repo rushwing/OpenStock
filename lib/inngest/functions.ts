@@ -92,9 +92,10 @@ export const sendWeeklyNewsSummary = inngest.createFunction(
 
             // Fetch subscribers for verification log
             try {
+                type KitSubscriber = { state: string; email_address: string; first_name?: string };
                 const subData = await kit.listSubscribers();
-                const subscriberList = subData.subscribers || [];
-                const confirmedCount = subscriberList.filter((s: any) => s.state === 'active').length;
+                const subscriberList: KitSubscriber[] = subData.subscribers || [];
+                const confirmedCount = subscriberList.filter((s) => s.state === 'active').length;
 
                 console.log(`📋 Target Audience: Found ${subData.total_subscribers} total subscribers in Kit.`);
                 console.log(`✅ Confirmed (Active) Subscribers receiving email: ${confirmedCount}`);
@@ -102,7 +103,7 @@ export const sendWeeklyNewsSummary = inngest.createFunction(
                 // Log names/emails for the user to see in Inngest dashboard
                 if (subscriberList.length > 0) {
                     console.log('--- Recipient List ---');
-                    subscriberList.forEach((s: any) => {
+                    subscriberList.forEach((s) => {
                         console.log(`${s.email_address} (${s.first_name || 'No Name'}) - Status: ${s.state}`);
                     });
                     console.log('----------------------');
@@ -229,7 +230,9 @@ export const checkStockAlerts = inngest.createFunction(
         }
 
         // Step 2: Group by symbol
-        const symbols = [...new Set(activeAlerts.map((a: any) => a.symbol))];
+        type AlertDoc = { _id: unknown; symbol: string; condition: string; targetPrice: number; active: boolean; triggered: boolean };
+        const alerts = activeAlerts as unknown as AlertDoc[];
+        const symbols = [...new Set(alerts.map((a) => a.symbol))];
 
         // Step 3: Fetch prices
         const prices = await step.run('fetch-prices', async () => {
@@ -239,9 +242,9 @@ export const checkStockAlerts = inngest.createFunction(
             // Process in chunks to be safe
             for (const sym of symbols) {
                 try {
-                    const quote = await getQuote(sym as string);
+                    const quote = await getQuote(sym);
                     if (quote && quote.c) {
-                        priceMap[sym as string] = quote.c;
+                        priceMap[sym] = quote.c;
                     }
                 } catch (e) {
                     console.error(`Failed to fetch price for ${sym}`, e);
@@ -251,10 +254,10 @@ export const checkStockAlerts = inngest.createFunction(
         });
 
         // Step 4: Check conditions
-        type TriggeredAlert = { alert: any; currentPrice: number };
+        type TriggeredAlert = { alert: AlertDoc; currentPrice: number };
         const triggeredAlerts: TriggeredAlert[] = [];
 
-        for (const alert of activeAlerts as any[]) {
+        for (const alert of alerts) {
             const currentPrice = prices[alert.symbol];
             if (!currentPrice) continue;
 
